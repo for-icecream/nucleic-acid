@@ -1,16 +1,9 @@
 <template>
   <div>
-    <div class="block">
-      <el-date-picker
-        @change="dateChange"
-        v-model="timeRange"
-        type="datetimerange"
-        :shortcuts="shortcuts"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      />
-    </div>
+    <!-- <div class="block">
+      <el-date-picker @change="dateChange" v-model="timeRange" type="datetimerange" :shortcuts="shortcuts"
+        range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+    </div> -->
     <!-- <button @click="test">dada</button> -->
     <div class="chart-container">
       <el-card class="box-card">
@@ -24,7 +17,7 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, reactive } from "vue";
+import {  inject, onMounted, reactive } from "vue";
 import DateToStr from "../../utils/formatDate";
 import Echarts from "../../components/utils/Echarts.vue";
 const $http = inject("$http");
@@ -39,8 +32,8 @@ let testedpercentData = reactive({
       type: "value",
       name: "人数",
       min: 0,
-      max: 25,
-      interval: 5,
+      max: 100,
+      interval: 10,
       axisLabel: {
         formatter: "{value} 人",
       },
@@ -91,7 +84,7 @@ let testedpercentData = reactive({
       },
     },
   ],
-  color: ["#00CED1", "#F4606C","#4169E1"],
+  color: ["#00CED1", "#F4606C", "#4169E1"],
 });
 
 // 检测结果配置项
@@ -104,8 +97,8 @@ let testResData = reactive({
       type: "value",
       name: "人数",
       min: 0,
-      max: 10,
-      interval: 1,
+      max: 100,
+      interval: 10,
       axisLabel: {
         formatter: "{value} 人",
       },
@@ -135,7 +128,7 @@ let testResData = reactive({
       },
     },
   ],
-  color: ["#03C14C", "#FF0A00", ],
+  color: ["#03C14C", "#FF0A00",],
 });
 
 // 获取检测率数据
@@ -178,43 +171,43 @@ const getResData = (start, end) => {
     });
 };
 
-const timeRange = ref([]);
-const shortcuts = [
-  {
-    text: "过去一周",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      return [start, end];
-    },
-  },
-  {
-    text: "过去三周",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-      return [start, end];
-    },
-  },
-  {
-    text: "过去三个月",
-    value: () => {
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-      return [start, end];
-    },
-  },
-];
-// 修改筛选时间段的回调
-const dateChange = (val) => {
-  let start = DateToStr(val[0]);
-  let end = DateToStr(val[1]);
-  getPercentData(start, end);
-  getResData(start, end);
-};
+// const timeRange = ref([]);
+// const shortcuts = [
+//   {
+//     text: "过去一周",
+//     value: () => {
+//       const end = new Date();
+//       const start = new Date();
+//       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+//       return [start, end];
+//     },
+//   },
+//   {
+//     text: "过去三周",
+//     value: () => {
+//       const end = new Date();
+//       const start = new Date();
+//       start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+//       return [start, end];
+//     },
+//   },
+//   {
+//     text: "过去三个月",
+//     value: () => {
+//       const end = new Date();
+//       const start = new Date();
+//       start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+//       return [start, end];
+//     },
+//   },
+// ];
+// // 修改筛选时间段的回调
+// const dateChange = (val) => {
+//   let start = DateToStr(val[0]);
+//   let end = DateToStr(val[1]);
+//   getPercentData(start, end);
+//   getResData(start, end);
+// };
 
 onMounted(() => {
   let currentDate = new Date();
@@ -227,6 +220,7 @@ onMounted(() => {
 .block {
   margin: 1em 0 0 2em;
 }
+
 .chart-container {
   margin-top: 2em;
   display: flex;

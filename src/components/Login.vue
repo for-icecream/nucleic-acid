@@ -1,17 +1,13 @@
 <template>
   <el-card class="box-card login-card" header="管理员登录">
     <el-form @submit.prevent="login" :model="userinfo" :rules="rules">
-      <el-form-item label="用户名" prop="username" required>
+      <el-form-item label="用户名" prop="username" required label-width="18%">
         <el-input v-model="userinfo.username"></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="password" required>
-        <el-input
-          v-model="userinfo.password"
-          type="password"
-          minlength="3"
-        ></el-input>
+      <el-form-item label="密码" prop="password" required label-width="18%">
+        <el-input v-model="userinfo.password" type="password" minlength="3"></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item class="el-form-buttons">
         <el-button type="primary" native-type="submit"> 登录 </el-button>
         <el-button type="primary" @click="toRegister"> 新用户注册 </el-button>
       </el-form-item>
@@ -59,12 +55,22 @@ const toRegister = () => {
 <style scope>
 .box-card {
   width: 25rem;
+  text-align: center;
 }
+
 .login-card {
   position: absolute;
   top: 50%;
   left: 50%;
   /* margin: 0 auto; */
   transform: translate(-50%, -50%);
+}
+
+.el-form-item {
+  height: 2.2rem;
+}
+
+.el-form-buttons .el-form-item__content {
+  justify-content: center;
 }
 </style>

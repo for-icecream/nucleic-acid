@@ -1,109 +1,57 @@
 <template>
-  <Table-list
-    ref="tableFrame"
-    :propsList="propsList"
-    :addInfo="addInfo"
-    :model="model"
-    :sTar="sTar"
-    @refresh="refreshAddInfo"
-    @reModefy="reModefy"
-  >
+  <Table-list ref="tableFrame" :propsList="propsList" :addInfo="addInfo" :model="model" :sTar="sTar"
+    @refresh="refreshAddInfo" @reModefy="reModefy" :needAdd="true">
     <!-- 时间筛选插槽 -->
     <template #time-filter>
       <div>
-        <el-date-picker
-          @change="dateChange"
-          v-model="timeRange"
-          type="datetimerange"
-          :shortcuts="shortcuts"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
+        <el-date-picker @change="dateChange" v-model="timeRange" type="datetimerange" :shortcuts="shortcuts"
+          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
       </div>
     </template>
     <!-- 表单插槽 -->
     <template #default>
       <el-form :model="addInfo">
-        <el-form-item label="身份证号" required>
-          <el-input
-            v-model="addInfo.identification"
-            :disabled="dismodefy"
-          ></el-input>
+        <el-form-item label="学号" required>
+          <el-input v-model="addInfo.identification" :disabled="dismodefy"></el-input>
         </el-form-item>
         <el-form-item label="姓名" required>
-          <el-input
-            v-model="addInfo.test_name"
-            :disabled="dismodefy"
-          ></el-input>
+          <el-input v-model="addInfo.test_name" :disabled="dismodefy"></el-input>
         </el-form-item>
         <el-form-item label="采样点" required>
-          <el-select
-            v-model="addInfo.n_sampleinstitut_code"
-            placeholder="采样点"
-          >
-            <el-option
-              v-for="item in s_institutionList"
-              :key="item._id"
-              :label="item.institutionName"
-              :value="item.insCode"
-            >
+          <el-select v-model="addInfo.n_sampleinstitut_code" placeholder="采样点">
+            <el-option v-for="item in s_institutionList" :key="item._id" :label="item.institutionName"
+              :value="item.insCode">
               <span style="float: left">{{ item.institutionName }}</span>
-              <span
-                style="
+              <span style="
                   float: right;
                   color: var(--el-text-color-secondary);
                   font-size: 13px;
-                "
-                >{{ item.insCode }}</span
-              >
+                ">{{ item.insCode }}</span>
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="检测机构" required>
-          <el-select
-            v-model="addInfo.n_testinstitut_code"
-            placeholder="检测机构"
-          >
-            <el-option
-              v-for="item in t_institutionList"
-              :key="item._id"
-              :label="item.institutionName"
-              :value="item.insCode"
-            >
+          <el-select v-model="addInfo.n_testinstitut_code" placeholder="检测机构">
+            <el-option v-for="item in t_institutionList" :key="item._id" :label="item.institutionName"
+              :value="item.insCode">
               <span style="float: left">{{ item.institutionName }}</span>
-              <span
-                style="
+              <span style="
                   float: right;
                   color: var(--el-text-color-secondary);
                   font-size: 13px;
-                "
-                >{{ item.insCode }}</span
-              >
+                ">{{ item.insCode }}</span>
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="检测时间" required>
-          <el-date-picker
-            v-model="addInfo.test_time"
-            format="YYYY/MM/DD HH:mm:ss"
-            value-format="YYYY/MM/DD HH:mm:ss"
-            type="datetime"
-            placeholder="选择日期时间"
-            :disabled-date="disabledDate"
-            :disabled-hours="disabledHours"
-            :disabled-minutes="disabledMinutes"
-            :disabled-seconds="disabledSeconds"
-          >
+          <el-date-picker v-model="addInfo.test_time" format="YYYY/MM/DD HH:mm:ss" value-format="YYYY/MM/DD HH:mm:ss"
+            type="datetime" placeholder="选择日期时间" :disabled-date="disabledDate" :disabled-hours="disabledHours"
+            :disabled-minutes="disabledMinutes" :disabled-seconds="disabledSeconds">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="检测结果" required>
           <el-select v-model="addInfo.test_result">
-            <el-option
-              v-for="item in testResults"
-              :key="item._id"
-              :value="item"
-            />
+            <el-option v-for="item in testResults" :key="item._id" :value="item" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -118,7 +66,7 @@ import { ref, onMounted, inject } from "vue";
 const $http = inject("$http");
 
 const propsList = ref({
-  identification: "身份证",
+  identification: "学号",
   test_name: "姓名",
   sex: "性别",
   age: "年龄",
@@ -136,7 +84,7 @@ const reModefy = (boo) => {
 // 检测结果
 const testResults = ref(["阴性", "阳性", "检测中"]);
 // 搜索目标字段
-const sTar = ref("身份证");
+const sTar = ref("学号");
 let addInfo = ref({});
 let t_institutionList = ref([]);
 let s_institutionList = ref([]);

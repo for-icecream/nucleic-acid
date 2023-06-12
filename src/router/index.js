@@ -34,28 +34,28 @@ const routes = [
 
       {
         path: "/resident",
-        name: "居民管理",
+        name: "学生管理",
         redirect: "/resident/residentList",
         icon: "User",
 
         children: [
           {
             path: "residentList",
-            name: "居民信息",
+            name: "学生信息",
             component: () => import("../views/resident/Resident.vue"),
           },
         ],
       },
       {
         path: "/street",
-        name: "街道管理",
+        name: "宿舍管理",
         redirect: "/street/streetList",
         icon: "Location",
 
         children: [
           {
             path: "streetList",
-            name: "街道信息",
+            name: "宿舍信息",
             component: () => import("../views/street/Street.vue"),
           },
         ],
@@ -98,7 +98,7 @@ const routes = [
         children: [
           {
             path: "nucleicacidList",
-            name: "居民核酸信息",
+            name: "学生核酸信息",
             component: () => import("../views/nucleicacid/NucleicAcid.vue"),
           },
         ],

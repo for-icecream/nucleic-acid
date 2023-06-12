@@ -12,7 +12,7 @@
         <el-form-item>
           <el-button type="primary" @click="reset">重置</el-button>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-show="props.needAdd">
           <el-button type="primary" @click="addBtn">新增</el-button>
         </el-form-item>
       </el-form>
@@ -22,93 +22,45 @@
 
     <div>
       <!-- 中部展示表格 -->
-      <el-table
-        class="fles-table"
-        stripe="true"
-        fit="true"
-        :data="
-          tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        "
-        border
-        style="width: 100%"
-        max-height="60vh"
-      >
-        <el-table-column
-          fixed
-          type="index"
-          label="序号"
-          width="80"
-          :index="(currentPage - 1) * pageSize + 1"
-        />
+      <el-table class="fles-table" fit="true" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        " border="true" style="width: 100%" max-height="60vh" :row-style="{ background: '#000', color: '#fff' }">
+        <el-table-column fixed type="index" label="序号" width="80" :index="(currentPage - 1) * pageSize + 1" />
         <!-- 表格动态渲染子项Item -->
         <template v-for="(value, key) in props.propsList" :key="value._id">
-          <el-table-column
-            :prop="key"
-            :label="value"
-            :filters="
-              key == 'test_result'
-                ? [
-                    { text: '阴性', value: '阴性' },
-                    { text: '阳性', value: '阳性' },
-                    { text: '检测中', value: '检测中' },
-                  ]
-                : ''
-            "
-            :filter-method="key == 'test_result' ? filterRes : ''"
-            filter-placement="bottom-end"
-          >
+          <el-table-column :prop="key" :label="value" :filters="key == 'test_result'
+            ? [
+              { text: '阴性', value: '阴性' },
+              { text: '阳性', value: '阳性' },
+              { text: '检测中', value: '检测中' },
+            ]
+            : ''
+            " :filter-method="key == 'test_result' ? filterRes : ''" filter-placement="bottom-end">
             <!-- 标签 -->
             <template v-if="key == 'test_result'" #default="scope">
-              <el-tag
-                :type="
-                  scope.row.test_result === '阳性'
-                    ? 'danger'
-                    : scope.row.test_result === '阴性'
-                    ? 'success'
-                    : ''
-                "
-                disable-transitions
-                >{{ scope.row.test_result }}</el-tag
-              >
+              <el-tag :type="scope.row.test_result === '阳性'
+                ? 'danger'
+                : scope.row.test_result === '阴性'
+                  ? 'success'
+                  : ''
+                " disable-transitions>{{ scope.row.test_result }}</el-tag>
             </template>
           </el-table-column>
         </template>
 
-        <el-table-column label="操作" width="140px">
+        <el-table-column label="操作" width="100px" v-if="props.needAdd">
           <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-              >编辑</el-button
-            >
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            >
+            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <!-- <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 底部分页组件 -->
-      <el-pagination
-        class="paginaiton"
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        background
-        :page-sizes="[10, 20, 100]"
-        :disabled="disabled"
-        layout="sizes, prev, pager, next"
-        :total="tableData.length"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination class="paginaiton" v-model:current-page="currentPage" v-model:page-size="pageSize" background
+        :page-sizes="[10, 20, 100]" :disabled="disabled" layout="sizes, prev, pager, next" :total="tableData.length"
+        @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
-    <el-dialog
-      v-model="addFormVisible"
-      :title="addSign ? '添加信息' : '修改信息'"
-      width="30%"
-      center
-    >
+    <el-dialog v-model="addFormVisible" :title="addSign ? '添加信息' : '修改信息'" width="30%" center>
       <!-- 弹出对话框的表单插槽 -->
       <slot></slot>
       <span class="dialog-footer">
@@ -128,7 +80,7 @@ import {
   toRefs,
   defineExpose,
 } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+// import { ElMessage, ElMessageBox } from "element-plus";
 const $http = inject("$http");
 const $message = inject("$message");
 const props = defineProps({
@@ -144,12 +96,17 @@ const props = defineProps({
   sTar: {
     type: String,
   },
+  needAdd: {
+    type: Boolean,
+    default: false
+  }
 });
 let currentPage = ref(1);
 let pageSize = ref(10);
 let tableData = ref([]);
 let findInfo = ref([]);
 let addInfo = toRefs(props.addInfo);
+
 // addInfo.value = { ...props.addInfo };
 console.log(addInfo);
 let addSign = ref(true);
@@ -221,7 +178,7 @@ const add = async () => {
           {
             Reflect.deleteProperty(addInfo.value, "test_name");
             // 新增加核酸信息 - 提交
-            $http.post(`/rest/${props.model}`, addInfo.value).then((res) => {
+            $http.post(`/rest/${props.model}/add`, addInfo.value).then((res) => {
               if (res.data.status == 200) {
                 $message({
                   type: "success",
@@ -310,36 +267,36 @@ const dialogCancel = () => {
 };
 
 // 根据ID删除 - 通用
-const handleDelete = (index, row) => {
-  ElMessageBox.confirm("确定删除吗？", "Warning", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
-    .then(() => {
-      $http
-        .delete(`/rest/${props.model}/${row[`${props.model}_id`]}`)
-        .then((res) => {
-          if (res.data.status == 200) {
-            $message({
-              type: "success",
-              message: "删除成功",
-            });
-            getData();
-          }
-        });
-    })
-    .catch(() => {
-      ElMessage({
-        type: "info",
-        message: "取消删除",
-      });
-    });
-};
+// const handleDelete = (index, row) => {
+//   ElMessageBox.confirm("确定删除吗？", "Warning", {
+//     confirmButtonText: "确认",
+//     cancelButtonText: "取消",
+//     type: "warning",
+//   })
+//     .then(() => {
+//       $http
+//         .delete(`/rest/${props.model}/${row[`${props.model}_id`]}`)
+//         .then((res) => {
+//           if (res.data.status == 200) {
+//             $message({
+//               type: "success",
+//               message: "删除成功",
+//             });
+//             getData();
+//           }
+//         });
+//     })
+//     .catch(() => {
+//       ElMessage({
+//         type: "info",
+//         message: "取消删除",
+//       });
+//     });
+// };
 
 // 分页组件回调
-const handleSizeChange = () => {};
-const handleCurrentChange = () => {};
+const handleSizeChange = () => { };
+const handleCurrentChange = () => { };
 // 检测结果过滤回调
 const filterRes = (value, row) => {
   console.log(row);
@@ -354,10 +311,10 @@ const formatDate = (data) => {
         gap * 1 > 72
           ? "七天"
           : gap > 48
-          ? "72小时"
-          : gap > 24
-          ? "48小时"
-          : "24小时";
+            ? "72小时"
+            : gap > 24
+              ? "48小时"
+              : "24小时";
     }
   });
 };
@@ -387,19 +344,29 @@ onMounted(() => {
   margin: 1em;
   margin-top: 2em;
 }
+
 .dialog-footer button:first-child {
   margin-right: 10px;
 }
+
 .paginaiton {
   margin: 1em 0;
 }
+
 .flex-table {
   display: flex;
   align-content: space-around;
 }
+
 .operate-container {
   width: 100%;
   display: flex;
   justify-content: space-between;
+}
+
+.el-table {
+  /* box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px; */
+  border-radius: 10px;
+
 }
 </style>
